@@ -1,51 +1,98 @@
-# Capstone Project - Bayesian Optimization
+# Capstone Project - Black-Box Bayesian Optimization
 
-## Overview
-This project focuses on using Bayesian Optimization to find the maximum values of unknown "black-box" functions. We are provided with initial datasets for 8 different functions and are tasked with iteratively querying these functions to converge on the global maximum.
+## Summary
 
-## Notebook: `3.ipynb`
+This project tackles eight unknown "black-box" functions using Bayesian optimization — a technique for finding optimal solutions when each evaluation is expensive and the underlying formula is hidden. Using Gaussian Process regression as a surrogate model and Expected Improvement as the acquisition function, we iteratively propose and evaluate input combinations to maximize each function's output. With only 13 submission attempts, the strategy balances exploring new regions of the input space against exploiting known promising areas. The approach mirrors real-world challenges like drug formulation, manufacturing tuning, and ML hyperparameter optimization where testing is costly and data is scarce.
 
-The main work is contained in the Jupyter Notebook `3.ipynb`. This notebook performs the following tasks:
+## Project Overview
 
-1.  **Data Loading & Merging**:
-    -   Loads initial training data from `.npy` files located in `initial_data/function_X/`.
-    -   Parses and loads historical submission data from `inputs.txt`, `inputs2.txt`, `outputs.txt`, and `outputs2.txt`.
-    -   Merges these datasets to create a comprehensive history of all known points for each function.
+Black-Box Optimization (BBO) challenge: find the global maximum of 8 unknown functions where we cannot see the formula or gradients — only query specific points and observe noisy outputs. We have **13 total submission attempts**, making every query count.
 
-2.  **Gaussian Process Regression (GPR)**:
-    -   Models the objective function using a Gaussian Process with a Matern kernel.
-    -   This provides both a mean prediction and an uncertainty estimate (standard deviation) across the search space.
+**Real-world relevance:** BBO is essential wherever function evaluation is expensive — hyperparameter tuning, A/B testing, drug discovery, chemical process optimization.
 
-3.  **Acquisition Function**:
-    -   Uses **Expected Improvement (EI)** to balance exploration (searching high-uncertainty areas) and exploitation (refining around known high-value areas).
-    -   Optimizes the EI function to propose the next best point to query.
+## The 8 Functions
 
-4.  **Visualization**:
-    -   Includes 3D scatter plots to visualize the spatial distribution of sampled points and their values.
+| Func | Dim | Description |
+|------|-----|-------------|
+| F1   | 2D  | Radiation source detection — very peaked signal |
+| F2   | 2D  | ML model log-likelihood — noisy, multi-modal |
+| F3   | 3D  | Drug discovery — minimize adverse reactions |
+| F4   | 4D  | Warehouse product placement — dynamic, local optima |
+| F5   | 4D  | Chemical process yield — unimodal |
+| F6   | 5D  | Cake recipe optimization — minimize negative scores |
+| F7   | 6D  | ML hyperparameter tuning — 6 parameters |
+| F8   | 8D  | Complex high-dimensional black-box |
 
-## How to Run
+## Project Structure
 
-1.  **Prerequisites**:
-    Ensure you have the following Python libraries installed:
-    ```bash
-    pip install numpy scipy matplotlib scikit-learn
-    ```
+```
+├── data/
+│   ├── initial/           # Starter .npy data (function_1/ ... function_8/)
+│   └── submissions/       # Per-round inputs and outputs
+│       ├── round_01/
+│       ├── round_02/
+│       └── round_03/
+├── notebooks/
+│   ├── 01_exploration.ipynb      # Initial data analysis and visualization
+│   ├── 02_framework.ipynb        # BO framework development
+│   └── 03_optimization.ipynb     # Main iterative optimization loop
+├── src/
+│   ├── bo_utils.py               # Shared GP, EI, and data loading utilities
+│   └── propose_round.py          # Per-round proposal script with configurable strategy
+├── results/
+│   └── tracking.md               # Round-by-round results and observations
+├── docs/
+│   ├── datasheet.md              # Data description, limitations, context
+│   └── model_card.md             # Model behaviour, assumptions, limitations
+└── question.md                   # Problem description
+```
 
-2.  **Execution**:
-    -   Open `3.ipynb` in VS Code or Jupyter Lab.
-    -   Run the cells sequentially.
-    -   **Cell 1**: Loads and merges the data for Function 1.
-    -   **Subsequent Cells**: Define the GP model, acquisition function, and generate proposals for Functions 1 through 8.
-    -   The notebook will output the "Next point to sample" and the "EI" value for that point.
+## Technical Approach
 
-## Methodology & Progress
+### Surrogate Model: Gaussian Process Regression
+- **Kernel:** `ConstantKernel * Matern(nu=2.5) + WhiteKernel` — captures smooth non-linear relationships with noise handling
+- The GP provides both predicted mean and uncertainty at every point
 
-We have been following an iterative optimization loop:
+### Acquisition Function: Expected Improvement (EI)
+- Balances **exploitation** (high predicted value) with **exploration** (high uncertainty)
+- `xi` parameter controls the exploration/exploitation tradeoff
+- Next point chosen by maximizing EI over random candidates in the search space
 
-1.  **Analyze Current Data**: We start with the provided initial samples.
-2.  **Model**: We fit a Gaussian Process to the available data $(X, y)$.
-3.  **Propose**: We maximize the Expected Improvement acquisition function to find the next query point $x_{new}$.
-4.  **Submit & Update**: We submit these points (simulated here by reading from `inputs.txt`/`outputs.txt`), receive the true function values, and append them to our dataset.
-5.  **Repeat**: We re-fit the GP model with the updated dataset and repeat the process to refine our search for the global maximum.
+### Iterative Workflow
+1. Load all available data (initial + submitted rounds)
+2. Fit GP model per function
+3. Propose next point via EI maximization
+4. Submit, record results, analyze, and adjust strategy
 
-Recent updates to the code include robust parsing logic to handle multi-line array formats in the text files, ensuring all historical data is correctly utilized for the next prediction.
+### Key Design Decisions
+- **Not using deep learning** — data volume is too low (10–40 initial samples per function) for neural approaches
+- **Per-function strategy** — different functions respond to different exploration/exploitation settings
+- **Phased approach** — early rounds explore broadly, later rounds exploit best-known regions
+
+## Results Summary
+
+*Updated as rounds progress. See `results/tracking.md` for full history.*
+
+| Function | Dim | Best Value Found | Improvement over Initial |
+|----------|-----|-----------------|------------------------|
+| F1       | 2D  | ~0.000          | —                      |
+| F2       | 2D  | 0.611           | —                      |
+| F3       | 3D  | -0.009          | +0.026                 |
+| F4       | 4D  | -0.228          | +3.798                 |
+| F5       | 4D  | 1609.836        | +520.977               |
+| F6       | 5D  | -0.173          | +0.541                 |
+| F7       | 6D  | 1.477           | +0.112                 |
+| F8       | 8D  | 9.905           | +0.306                 |
+
+## Documentation
+
+- **[Datasheet](docs/datasheet.md)** — Data description, limitations, and context
+- **[Model Card](docs/model_card.md)** — Model behaviour, assumptions, limitations, and interpretability
+
+## Dependencies
+
+```
+numpy, scikit-learn, scipy, matplotlib
+```
+
+Install: `uv sync` | Run notebooks: `uv run jupyter notebook`

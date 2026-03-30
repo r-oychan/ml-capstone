@@ -8,3 +8,16 @@ wheels/
 
 # Virtual environments
 .venv
+
+# OS files
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Old flat files (migrated to data/submissions/)
+/inputs*.txt
+/outputs*.txt
+
+# Archive (initial data already extracted)
+*.zip
