@@ -37,7 +37,11 @@ Black-Box Optimization (BBO) challenge: find the global maximum of 8 unknown fun
 │   ├── bo_utils.py               # Shared GP, EI, and data loading utilities
 │   └── propose_round.py          # Per-round proposal script with configurable strategy
 ├── results/
-│   └── tracking.md               # Round-by-round results and observations
+│   ├── tracking.md               # Round-by-round results and observations
+│   ├── analysis.md               # Per-function analysis with visualisations
+│   └── per_function/             # Individual convergence and GP surface plots
+├── notebooks/
+│   └── 04_visualisations.ipynb   # Reproducible diagram generation
 ├── docs/
 │   ├── datasheet.md              # Data description, limitations, context
 │   └── model_card.md             # Model behaviour, assumptions, limitations
@@ -89,6 +93,14 @@ Black-Box Optimization (BBO) challenge: find the global maximum of 8 unknown fun
 - **F6** was the latest bloomer — flat for 9 rounds then improved in every remaining round, finishing at -0.015 in the final submission.
 - **F7 and F8** both peaked in the Round 7 exploration round, confirming that a deliberate exploration reset unlocked regions that pure exploitation had missed.
 - **F1** proved the hardest function — the radiation source peak is sub-0.001 wide, making reliable GP-guided search infeasible within the submission budget.
+
+## Detailed Analysis and Tracking
+
+The **[per-function analysis](results/analysis.md)** provides a detailed breakdown of each function's optimisation journey, including convergence plots, GP surrogate surface visualisations, and commentary on what worked and what didn't. For the 2D functions (F1, F2), full 3D GP surface plots reveal the surrogate's learned landscape; for the 3D function (F3), 2D slices through the best point show the model's predictions around the optimum.
+
+The **[round-by-round tracker](results/tracking.md)** records every submission across all 13 rounds — the exact input points, output values, whether each result set a new best, and cumulative observations that guided strategy adjustments. This provides a complete audit trail of the optimisation process from start to finish.
+
+All visualisations are reproducible via the [04_visualisations.ipynb](notebooks/04_visualisations.ipynb) notebook.
 
 ## Documentation
 
