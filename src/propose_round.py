@@ -40,23 +40,23 @@ from bo_utils import (
 # More candidates = better coverage but slower. Use more for high-D functions.
 
 STRATEGIES = {
-    # R7: Exploration round — broad search across all functions to gather GP data.
-    # F1: Full-domain exploration. 5 rounds of local search failed.
-    1: {"xi": 0.05, "radius": None, "n_local": 0,      "n_broad": 200_000},
-    # F2: Full-domain exploration. Never beaten initial best.
-    2: {"xi": 0.05, "radius": None, "n_local": 0,      "n_broad": 200_000},
-    # F3: Full-domain exploration. Stuck at R1 best.
-    3: {"xi": 0.05, "radius": None, "n_local": 0,      "n_broad": 200_000},
-    # F4: Mostly explore, keep some local near R4 best.
-    4: {"xi": 0.05, "radius": 0.15, "n_local": 50_000, "n_broad": 150_000},
-    # F5: Reliable improver. Explore broadly but keep some local context.
-    5: {"xi": 0.05, "radius": 0.10, "n_local": 50_000, "n_broad": 150_000},
-    # F6: Full-domain exploration. 5 rounds stuck.
-    6: {"xi": 0.05, "radius": None, "n_local": 0,      "n_broad": 200_000},
-    # F7: Reliable improver. Explore broadly but keep some local context.
-    7: {"xi": 0.05, "radius": 0.10, "n_local": 50_000, "n_broad": 150_000},
-    # F8: Full-domain exploration. 8D needs massive sampling.
-    8: {"xi": 0.05, "radius": None, "n_local": 0,      "n_broad": 300_000},
+    # R13: FINAL ROUND. All exploit. Tightest radii yet. F4/F6 still climbing.
+    # F1: Final shot at original peak [0.731, 0.733].
+    1: {"xi": 0.001, "radius": 0.001, "n_local": 300_000, "n_broad": 0},
+    # F2: Noisy. R6 best [0.699, 0.926]. Ultra-tight.
+    2: {"xi": 0.001, "radius": 0.005, "n_local": 200_000, "n_broad": 0},
+    # F3: R8 best [0.392, 0.358, 0.435]. Tightest yet.
+    3: {"xi": 0.001, "radius": 0.008, "n_local": 150_000, "n_broad": 0},
+    # F4: R12 best [0.360, 0.402, 0.427, 0.418]. Still climbing — highest priority.
+    4: {"xi": 0.001, "radius": 0.01,  "n_local": 300_000, "n_broad": 0},
+    # F5: R6 best [0.989, 0.949, 0.965, 0.929]. Tightest ever attempt.
+    5: {"xi": 0.001, "radius": 0.01,  "n_local": 200_000, "n_broad": 0},
+    # F6: R12 best [0.432, 0.413, 0.599, 0.775, 0.092]. Biggest improver — exploit hard.
+    6: {"xi": 0.001, "radius": 0.008, "n_local": 200_000, "n_broad": 0},
+    # F7: R7 best [0.0, 0.229, 0.232, 0.205, 0.271, 0.893]. Tightest yet.
+    7: {"xi": 0.001, "radius": 0.008, "n_local": 200_000, "n_broad": 0},
+    # F8: R7 best [0.157, 0.041, 0.081, 0.036, 0.556, 0.283, 0.151, 0.558]. Tightest yet.
+    8: {"xi": 0.001, "radius": 0.008, "n_local": 300_000, "n_broad": 0},
 }
 
 

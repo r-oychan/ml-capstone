@@ -28,10 +28,7 @@ Black-Box Optimization (BBO) challenge: find the global maximum of 8 unknown fun
 ```
 ├── data/
 │   ├── initial/           # Starter .npy data (function_1/ ... function_8/)
-│   └── submissions/       # Per-round inputs and outputs
-│       ├── round_01/
-│       ├── round_02/
-│       └── round_03/
+│   └── submissions/       # Per-round inputs and outputs (round_01/ ... round_13/)
 ├── notebooks/
 │   ├── 01_exploration.ipynb      # Initial data analysis and visualization
 │   ├── 02_framework.ipynb        # BO framework development
@@ -71,18 +68,27 @@ Black-Box Optimization (BBO) challenge: find the global maximum of 8 unknown fun
 
 ## Results Summary
 
-*Updated as rounds progress. See `results/tracking.md` for full history.*
+*All 13 rounds complete. See `results/tracking.md` for full round-by-round history.*
 
-| Function | Dim | Best Value Found | Improvement over Initial |
-|----------|-----|-----------------|------------------------|
-| F1       | 2D  | ~0.000          | —                      |
-| F2       | 2D  | 0.611           | —                      |
-| F3       | 3D  | -0.009          | +0.026                 |
-| F4       | 4D  | -0.228          | +3.798                 |
-| F5       | 4D  | 1609.836        | +520.977               |
-| F6       | 5D  | -0.173          | +0.541                 |
-| F7       | 6D  | 1.477           | +0.112                 |
-| F8       | 8D  | 9.905           | +0.306                 |
+| Function | Dim | Description              | Best Value  | Best Round | Improvement over Initial |
+|----------|-----|--------------------------|-------------|------------|--------------------------|
+| F1       | 2D  | Radiation source         | 8.58e-16    | Round 7    | +0.87e-16 (trivial)      |
+| F2       | 2D  | ML log-likelihood        | 0.6747      | Round 6    | +0.064                   |
+| F3       | 3D  | Drug discovery           | -0.0071     | Round 8    | +0.028                   |
+| F4       | 4D  | Warehouse placement      | 0.6502      | Round 12   | +4.676                   |
+| F5       | 4D  | Chemical yield           | 7715.6      | Round 6    | +6626.7                  |
+| F6       | 5D  | Cake recipe              | -0.0153     | Round 13   | +0.699                   |
+| F7       | 6D  | ML hyperparameters       | 1.6920      | Round 7    | +0.327                   |
+| F8       | 8D  | Complex black-box        | 9.9711      | Round 7    | +0.373                   |
+
+### Key findings
+
+- **All 8 functions improved** over their initial best values across 13 rounds.
+- **F5** achieved the largest absolute gain (+6627), found via broad EI in Round 6. The R6 value of 7716 was never replicated — confirming extreme sensitivity in the chemical yield landscape.
+- **F4** was the most consistent Phase 3 improver, climbing steadily from -4.03 to +0.65 across 12 rounds.
+- **F6** was the latest bloomer — flat for 9 rounds then improved in every remaining round, finishing at -0.015 in the final submission.
+- **F7 and F8** both peaked in the Round 7 exploration round, confirming that a deliberate exploration reset unlocked regions that pure exploitation had missed.
+- **F1** proved the hardest function — the radiation source peak is sub-0.001 wide, making reliable GP-guided search infeasible within the submission budget.
 
 ## Documentation
 
