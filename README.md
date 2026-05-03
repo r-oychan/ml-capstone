@@ -70,6 +70,28 @@ Black-Box Optimization (BBO) challenge: find the global maximum of 8 unknown fun
 - **Per-function strategy** — different functions respond to different exploration/exploitation settings
 - **Phased approach** — early rounds explore broadly, later rounds exploit best-known regions
 
+## Hyperparameter Optimisation
+
+The BO system itself has four key hyperparameters, tuned per function across rounds:
+
+| Parameter | Range Used | Purpose |
+|-----------|-----------|---------|
+| **xi** | 0.001 - 0.05 | Exploration parameter for EI. Low = exploit known good regions, high = explore uncertain areas |
+| **radius** | 0.001 - 0.15 | Local search neighbourhood around the current best point |
+| **n_local** | 0 - 300,000 | Candidate points sampled near the best known point (exploitation) |
+| **n_broad** | 0 - 200,000 | Candidate points sampled across the full [0, 1) domain (exploration) |
+
+These were tuned manually each round based on observed results, following a phased schedule:
+- **Rounds 1-3:** Uniform defaults (xi=0.01, 10k broad candidates). Hit diminishing returns by R3.
+- **Rounds 4-6:** Per-function tuning introduced. Tighter xi (0.001) for functions with known peaks, broader search for stuck functions. Produced the project's best single round (R6: 3 new bests).
+- **Round 7:** Deliberate exploration reset (xi=0.05, broad-heavy). Produced 4 new bests, including F7/F8 all-time peaks.
+- **Rounds 8-13:** Pure exploitation. Progressively tighter radii (0.15 down to 0.001) with increasing candidate counts (up to 300k).
+
+The GP kernel hyperparameters (`ConstantKernel`, `Matern length_scale`, `WhiteKernel noise_level`) were optimised automatically by scikit-learn's internal marginal likelihood maximisation with 5 restarts per fit.
+
+![F4 Convergence](results/per_function/f4_convergence.png)
+*F4 (Warehouse Placement) — the most consistent improver, showing how per-function exploitation with progressively tightening radius drove steady gains across 12 rounds.*
+
 ## Results Summary
 
 *All 13 rounds complete. See `results/tracking.md` for full round-by-round history.*
