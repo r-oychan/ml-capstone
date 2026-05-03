@@ -62,7 +62,7 @@ Distributed via the PCMLAI course platform. Initial data downloadable as `.npy` 
 
 ## Maintenance
 
-Dataset is static (initial points don't change). Additional data points are accumulated through the iterative submission process — up to 13 rounds of 8 new points each.
+Dataset is static (initial points don't change). All 13 submission rounds have been completed, adding 13 points per function to the initial datasets. Final dataset sizes range from 23 (F1, F2) to 53 (F8) points per function.
 
 ## Limitations
 
